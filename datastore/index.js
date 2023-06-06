@@ -108,18 +108,6 @@ exports.update = (id, text, callback) => {
     }
   });
 };
-// if it doesn, if it does, invoke writeFile with filePath,
-// text, and invoke callback argument?
-
-
-
-// var item = items[id];
-// if (!item) {
-//   callback(new Error(`No item with id: ${id}`));
-// } else {
-//   items[id] = text;
-//   callback(null, { id, text });
-// }
 
 /* 6) Deleting a Todo
 Lastly, refactor the delete function to remove the todo file stored in the dataDir based on the supplied id.
@@ -130,15 +118,42 @@ Commit your progress: "Complete deleting a todo"
 */
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+  //make fileName
+  //make filePath
+  //read file to check if exists
+  //if err throw error
+  // else
+  //fs.unlink (path, (err) => {
+  // if (err) thrw err
+  // else console log (path deleted)
+  //  })
+
+  var fileName = id + '.txt';
+  var filePath = path.join(exports.dataDir, fileName);
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          callback(new Error('File failed to be deleted'));
+        } else {
+          callback(null);
+        }
+      });
+    }
+  });
 };
+
+// var item = items[id];
+// delete items[id];
+// if (!item) {
+//   // report an error if item not found
+//   callback(new Error(`No item with id: ${id}`));
+// } else {
+//   callback();
+// }
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
