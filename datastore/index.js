@@ -13,9 +13,38 @@ Commit your progress: "Complete creating new todos"
 
 */
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  // If we invoke getNextUniqueId, counter.txt will increment
+  // by one, the callback function is invoked with
+  // parameters (err, stringCounter)
+  // We can use stringCounter value as new todo file name
+  // i.e. if stringCounter === '00001', then file will be '00001.txt'
+  // invoker fs.writeFile with new file path, text argument, and callback(err, newTodo)?
+  //
+
+  counter.getNextUniqueId((err, counterString) => {
+    var todo = {text: text, id: counterString};
+    // console.log('todo.text:', todo.text);
+    // console.log('id:', todo.id);
+    counterString = counterString + '.txt';
+    var filePath = path.join(exports.dataDir, counterString);
+    // console.log('filePath: ', filePath, ' text: ', text);
+    fs.writeFile(filePath, text, (err) => {
+      // console.log(err, todo);
+      if (err) {
+        throw ('error writing file');
+      } else {
+        callback(null, todo);
+      }
+    });
+  });
+
+
+
+
+
+  // var id = counter.getNextUniqueId();
+  // items[id] = text;
+  // callback(null, { id, text });
 };
 
 /*
