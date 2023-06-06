@@ -60,10 +60,17 @@ Commit your progress: "Complete retrieving all todos"
 */
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      throw ('error retrieving files');
+    } else {
+      var data = _.map(files, (id) => {
+        id = id.slice(0, 5);
+        return { id: id, text: id };
+      });
+      callback(null, data);
+    }
   });
-  callback(null, data);
 };
 
 /* 4) Retrieving one Todo
