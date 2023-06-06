@@ -23,13 +23,9 @@ exports.create = (text, callback) => {
 
   counter.getNextUniqueId((err, counterString) => {
     var todo = {text: text, id: counterString};
-    // console.log('todo.text:', todo.text);
-    // console.log('id:', todo.id);
     counterString = counterString + '.txt';
     var filePath = path.join(exports.dataDir, counterString);
-    // console.log('filePath: ', filePath, ' text: ', text);
     fs.writeFile(filePath, text, (err) => {
-      // console.log(err, todo);
       if (err) {
         throw ('error writing file');
       } else {
@@ -37,14 +33,6 @@ exports.create = (text, callback) => {
       }
     });
   });
-
-
-
-
-
-  // var id = counter.getNextUniqueId();
-  // items[id] = text;
-  // callback(null, { id, text });
 };
 
 /*
@@ -82,12 +70,17 @@ Commit your progress: "Complete retrieving one todo"
 */
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  var fileName = id + '.txt';
+  var filePath = path.join(exports.dataDir, fileName);
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      data = data.toString();
+      var todo = { id: id, text: data };
+      callback(null, todo);
+    }
+  });
 };
 
 /* 5) Updating a ToDO
@@ -99,14 +92,34 @@ Commit your progress: "Complete updating a todo"
 */
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  var fileName = id + '.txt';
+  var filePath = path.join(exports.dataDir, fileName);
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      fs.writeFile(filePath, text, (err) => {
+        if (err) {
+          throw ('error writing file');
+        } else {
+          callback(null, text);
+        }
+      });
+    }
+  });
 };
+// if it doesn, if it does, invoke writeFile with filePath,
+// text, and invoke callback argument?
+
+
+
+// var item = items[id];
+// if (!item) {
+//   callback(new Error(`No item with id: ${id}`));
+// } else {
+//   items[id] = text;
+//   callback(null, { id, text });
+// }
 
 /* 6) Deleting a Todo
 Lastly, refactor the delete function to remove the todo file stored in the dataDir based on the supplied id.
@@ -144,5 +157,4 @@ At this point, it's time to circle back to finishing your work on readAll. You s
 
 Learn about promises by completing the 'Bare Minimum Requirements' of [Course] Promises. Then come back to this course and complete readAll.
 
-Commit your progress: "Complete Bare Minimum Requirements"
-*/
+Commit your progress: "Complete Bare Minimum Requirements" */
